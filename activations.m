@@ -1,0 +1,86 @@
+%% Load the pretrained network resnet50
+
+net = resnet50;
+
+%% Read and show the image. Save its size for future use
+
+imOg = imread ('face.jpg');
+im = imresize(imOg, [224 224]);
+imshow(imOg)
+imgSize = size(im);
+imgSize = imgSize(1:2);
+ogSize = size(imOg);
+ogSize = ogSize(1:2);
+
+%% View network architecture
+
+% analyzeNetwork(net);
+
+%% Activations of conv1
+
+act104 = activations(net,im,'conv1');
+sz = size(act104);
+act104 = reshape(act104,[sz(1) sz(2) 1 sz(3)]);
+I = imtile(mat2gray(act104), 'GridSize',[8 8]);
+imshow(I)
+
+%% Specific activations
+
+act1ch46 = act104(:,:,:,46);
+act1ch46 = mat2gray(act1ch46);
+act1ch46 = imresize(act1ch46,ogSize);
+
+I = imtile({imOg,act1ch46});
+imshow(I)
+
+%% Find the strongest activation channel
+
+[maxValue,maxValueIndex] = max(max(max(act104)));
+act1chMax = act104(:,:,:,maxValueIndex);
+act1chMax = mat2gray(act1chMax);
+act1chMax = imresize(act1chMax,ogSize);
+
+I = imtile({imOg,act1chMax});
+imshow(I)
+
+%% Activations of conv102
+
+act104 = activations(net,im,'res4c_branch2a');
+sz = size(act104);
+act104 = reshape(act104,[sz(1) sz(2) 1 sz(3)]);
+I = imtile(imresize(mat2gray(act104),[64 64]), 'GridSize',[8 8]);
+imshow(I)
+
+%% Activations of activation 104
+
+act104 = activations(net,im,'activation_29_relu');
+sz = size(act104);
+act104 = reshape(act104,[sz(1) sz(2) 1 sz(3)]);
+I = imtile(imresize(mat2gray(act104),[64 64]), 'GridSize',[8 8]);
+imshow(I)
+
+%% Activations of bn 93
+
+bn93 = activations(net,im,'bn4b_branch2a');
+sz = size(bn93);
+bn93 = reshape(bn93,[sz(1) sz(2) 1 sz(3)]);
+I = imtile(imresize(mat2gray(bn93),[64 64]), 'GridSize',[8 8]);
+imshow(I)
+ 
+%% Bn 93 strongest activations
+
+[maxValue6,maxValueIndex6] = max(max(max(bn93)));
+bn93chMax = bn93(:,:,:,maxValueIndex6);
+imshow(imresize(mat2gray(bn93chMax),imgSize))
+
+%% Randaom strongest activations
+
+random = activations(net,im,'res5c_branch2c');
+sz = size(random);
+random = reshape(random,[sz(1) sz(2) 1 sz(3)]);
+I = imtile(imresize(mat2gray(random),[64 64]), 'GridSize',[8 8]);
+% imshow(I)
+
+[maxValueRandom,maxValueIndexRandom] = max(max(max(random)));
+randomchMax = random(:,:,:,maxValueIndexRandom);
+imshow(imresize(mat2gray(randomchMax),ogSize))
