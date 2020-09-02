@@ -4,6 +4,8 @@ South Korea under **IPIS Lab** (Information Processing and Intelligent Systems L
 implements several *visual tracking algorithms* including a brand new **SNS-CF**. Enjoy the
 ride...
 
+## Published manuscript: https://doi.org/10.3390/s20174881
+
 <p align="center">
   <img src="misc/Benchmark.gif" width="1641">
 </p>
